@@ -1,8 +1,14 @@
 import Hero from '@/components/Hero'
 import SearchBar from '@/components/SearchBar'
 import CustomFilter from '@/components/CustomFilter'
+import { fetchCars } from '@/utils'
+import CarCard from '@/components/CarCard'
 
-const Home = () => {
+const Home = async () => {
+    const allCars = await fetchCars()
+    const isDataEmpty: boolean =
+        !Array.isArray(allCars) || allCars.length < 1 || !allCars
+
     return (
         <main className="overflow-hidden">
             <Hero />
@@ -18,6 +24,23 @@ const Home = () => {
                         <CustomFilter title="fuel" />
                     </div>
                 </div>
+
+                {!isDataEmpty ? (
+                    <section>
+                        <div className="home__cars-wrapper">
+                            {allCars?.map((car: any) => (
+                                <CarCard key={car} car={car} />
+                            ))}
+                        </div>
+                    </section>
+                ) : (
+                    <div className="home__error-container">
+                        <h2 className="text-black text-xl font-bold">
+                            Oops, no results
+                        </h2>
+                        <p>{allCars?.message}</p>
+                    </div>
+                )}
             </div>
         </main>
     )
